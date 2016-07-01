@@ -1,7 +1,7 @@
 // CreepRoles
-var roleHarvester=require('role.harvester');
-var roleUpgrader=require('role.upgrader');
-var roleBuilder=require('role.builder');
+var creepHarvester=require('creep.harvester');
+var creepUpgrader=require('creep.upgrader');
+var creepBuilder=require('creep.builder');
 // Room
 var roomSpawner=require('room.spawner');
 
@@ -12,21 +12,21 @@ module.exports.loop = function () {
     
     // Retire deceased creeps
     for (let name in Memory.creeps) {
-        if (Game.creeps[name] == undefined) {
+        if (Game.creeps[name] === undefined) {
             delete Memory.creeps[name];
         }
         
         var creep=Game.creeps[name];
         if(creep.memory.role === 'harvester') {
-            roleHarvester.run(creep);
+            creepHarvester.run(creep);
             harvesterCount++;
         }
         if(creep.memory.role === 'upgrader') {
-            roleUpgrader.run(creep);
+            creepUpgrader.run(creep);
             upgraderCount++;
         }
         if(creep.memory.role === 'builder') {
-            roleBuilder.run(creep);
+            creepBuilder.run(creep);
             builderCount++;
         }
     }

@@ -1,4 +1,4 @@
-var roleUpgrader = require('role.upgrader');
+var creepUpgrader = require('creep.upgrader');
 
 module.exports = {
     run: function(creep) {
@@ -11,7 +11,7 @@ module.exports = {
         if(creep.memory.working) {
             var constructionSite=creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
             if (constructionSite === undefined) {
-                roleUpgrader.run(creep);
+                creepUpgrader.run(creep);
                 return;
             }
             if(creep.build(constructionSite) === ERR_NOT_IN_RANGE) {
