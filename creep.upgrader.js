@@ -1,7 +1,8 @@
-var roomConstruction=require('room.construction');
-
 module.exports = {
-    run: function(creep) {
+    run: run
+};
+
+function run(creep) {
         // An upgrader is working if it is upgrading the controller or moving to do so
         // An upgrader is not working if it is no longer carrying energy
         
@@ -21,8 +22,5 @@ module.exports = {
             if (creep.harvest(source) === ERR_NOT_IN_RANGE) {
                 creep.moveTo(source);
             }
-        }
-        
-        roomConstruction.constructRoad(creep);
+        }       
     }
-};
