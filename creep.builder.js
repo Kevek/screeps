@@ -11,7 +11,7 @@ function run(creep) {
     }
     if (creep.memory.working) {
         var constructionSite = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
-        if (constructionSite === undefined) {
+        if (constructionSite === null) {
             creepUpgrader.run(creep);
             return;
         }

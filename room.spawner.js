@@ -5,7 +5,7 @@ module.exports = {
 function spawn(creepNumData) {
     var targetHarvesters = 5;
     var targetUpgraders = 1;
-    var targetBuilders = 2;
+    var targetBuilders = 4;
     var name = "";
     if (creepNumData.harvesterCount < targetHarvesters) {
         name = Game.spawns.Spawn1.createCreep([WORK, WORK, CARRY, MOVE], undefined, {
