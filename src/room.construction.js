@@ -1,6 +1,5 @@
 module.exports = {
-    constructRoad: constructRoad,
-    constructExtensions: constructExtensions
+    controllerUpgradeConstructions: controllerUpgradeConstructions
 };
 
 function constructRoad(creep) {
@@ -10,9 +9,14 @@ function constructRoad(creep) {
         var result = creep.room.createConstructionSite(creep.pos, STRUCTURE_ROAD);
     }
 }
+
+function controllerUpgradeConstructions(room) {
+    constructExtensions(room);
+    constructTowers(room);
+}
 // TODO: We should call this when the known controller level goes UP
 function constructExtensions(room) {
-    var controllerLevelToAmount={
+    var controllerLevelToAmount = {
         1: 0,
         2: 5,
         3: 10,
@@ -23,19 +27,49 @@ function constructExtensions(room) {
         8: 60
     };
     var currentExtensions = room.find(FIND_MY_STRUCTURES, {
-        filter: { structureType: STRUCTURE_EXTENSION }
+        filter: {
+            structureType: STRUCTURE_EXTENSION
+        }
     });
-    var extensionsToBuild=controllerLevelToAmount[room.controller.level]-
+    var extensionsToBuild = controllerLevelToAmount[room.controller.level] -
         currentExtensions.length;
 
-    // Controller is too low level to construct extensions
-    if (!extensionsToBuild) {
+    if (extensionsToBuild <= 0) {
+        // We already have all the extensions we can build
         return;
     }
     var spawn = Game.spawns.Spawn1;
     var pos = spawn.pos;
 
     constructAroundPoint(room, pos, 50, 4, 100, extensionsToBuild, STRUCTURE_EXTENSION);
+}
+
+function constructTowers(room) {
+    var controllerLevelToAmount = {
+        1: 0,
+        2: 0,
+        3: 1,
+        4: 1,
+        5: 2,
+        6: 2,
+        7: 3,
+        8: 6
+    }
+    var currentTowers = room.find(FIND_MY_STRUCTURES, {
+        filter: {
+            structureType: STRUCTURE_TOWER
+        }
+    });
+    var towersToBuild = controllerLevelToAmount[room.controller.level] -
+        currentTowers.length;
+    if (towersToBuild <= 0) {
+        // Too low level to build towers or already saturated
+        return;
+    }
+    var spawn = Game.spawns.Spawn1;
+    var pos = spawn.pos;
+
+    constructAroundPoint(room, pos, 80, 6, 100, towersToBuild, STRUCTURE_TOWER);
 }
 
 function constructAroundPoint(room, centerPosition, maxDiameter, jumpDistance, maxTries, amountToBuild, structureCode) {
@@ -49,8 +83,8 @@ function constructAroundPoint(room, centerPosition, maxDiameter, jumpDistance, m
     var x_limit = (width - height) / 2;
     var y_limit = 0;
 
-    var built=0;
-    var tries=0;
+    var built = 0;
+    var tries = 0;
     var resultCode = -1;
     while (resultCode != ERR_FULL && tries < maxTries && built < amountToBuild) {
         // go right
@@ -63,7 +97,7 @@ function constructAroundPoint(room, centerPosition, maxDiameter, jumpDistance, m
         // go up
         else if (dy > 0) {
             if (y > y_limit) {
-                dx = -jumpDistance*2;
+                dx = -jumpDistance * 2;
                 dy = 0;
             }
         }
@@ -77,7 +111,7 @@ function constructAroundPoint(room, centerPosition, maxDiameter, jumpDistance, m
         // go down
         else if (dy < 0) {
             if (y < (-1 * y_limit)) {
-                dx = jumpDistance*2;
+                dx = jumpDistance * 2;
                 dy = 0;
                 x_limit += 1;
                 y_limit += 1;
@@ -85,11 +119,11 @@ function constructAroundPoint(room, centerPosition, maxDiameter, jumpDistance, m
         }
         x += dx;
         y += dy;
-        
+
         if ((-width / 2 < x && x <= width / 2) && (-height / 2 < y && y <= height / 2)) {
             var newPos = new RoomPosition(centerPosition.x + x, centerPosition.y - y, room.name);
             resultCode = room.createConstructionSite(newPos, structureCode);
-            if (resultCode==OK) {
+            if (resultCode == OK) {
                 built++;
             }
         }

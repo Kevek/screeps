@@ -12,13 +12,15 @@ function run(creep) {
             var extensions = creep.room.find(FIND_MY_STRUCTURES, {
                 filter: { structureType: STRUCTURE_EXTENSION }
             });
-            if (extensions.length) {
-                extensions=_.filter(extensions, function(e) {
+            extensions=_.filter(extensions, function(e) {
                     return e.energy<e.energyCapacity;
                 })
+            if (extensions.length) {
                 if (creep.transfer(extensions[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(extensions[0])
                 }
+            } else {
+                creep.moveTo(Game.spawns.Spawn1);
             }
         }
     } else {

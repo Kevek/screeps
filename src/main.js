@@ -2,10 +2,15 @@
 var creepHarvester = require('creep.harvester');
 var creepUpgrader = require('creep.upgrader');
 var creepBuilder = require('creep.builder');
-// Room
-var roomSpawner = require('room.spawner');
+// Spawn
+require('prototype.spawn')();
 // Construction
-var roomConstruction = require('room.construction');
+var roomConstruction = undefined;
+// State
+var gameState = require('game.state');
+// Room
+require('prototype.room')();
+
 module.exports.loop = function() {
     var harvesterCount = 0;
     var upgraderCount = 0;
@@ -13,14 +18,8 @@ module.exports.loop = function() {
 
     // Go through each room and build state
     for (let name in Game.rooms) {
-        var room=Game.rooms[name];
-        if (room.memory.knownControllerLevel != undefined) {
-            // We've increased in controller level. It's time to build some construction sites.
-            if (room.memory.knownControllerLevel < room.controller.level) {
-                roomConstruction.constructExtensions(room);
-            }
-        }
-        room.memory.knownControllerLevel=room.controller.level;
+        var room = Game.rooms[name];
+        room.checkState(gameState);
     }
 
     // Run each creep
@@ -33,20 +32,18 @@ module.exports.loop = function() {
         }
         if (creep.memory.role === 'harvester') {
             creepHarvester.run(creep);
+            gameState.rooms[creep.room.name].numHarvesters += 1;
             harvesterCount++;
         }
         if (creep.memory.role === 'upgrader') {
             creepUpgrader.run(creep);
-            upgraderCount++;
+            gameState.rooms[creep.room.name].numUpgraders += 1;
         }
         if (creep.memory.role === 'builder') {
             creepBuilder.run(creep);
-            builderCount++;
+            gameState.rooms[creep.room.name].numBuilders += 1;
         }
     }
-    roomSpawner.spawn({
-        harvesterCount: harvesterCount,
-        upgraderCount: upgraderCount,
-        builderCount: builderCount
-    });
+
+    Game.spawns.Spawn1.considerSpawning(gameState);
 }
