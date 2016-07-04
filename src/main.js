@@ -8,7 +8,12 @@ require('prototype.spawn')();
 var roomConstruction = require('room.construction');
 // State
 var gameState=require('game.state');
+
+// PROFILER
+var profiler = require('screeps-profiler');
+profiler.enable();
 module.exports.loop = function() {
+    profiler.wrap(function() {
     var harvesterCount = 0;
     var upgraderCount = 0;
     var builderCount = 0;
@@ -70,9 +75,10 @@ module.exports.loop = function() {
         }
     }
     
-    console.log(JSON.stringify(gameState));
-    console.log(harvesterCount);
+    // console.log(JSON.stringify(gameState));
+    // console.log(harvesterCount);
 
 // TODO: Do this for all spawns
     Game.spawns.Spawn1.considerSpawning(gameState);
+    });
 }

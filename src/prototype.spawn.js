@@ -15,7 +15,7 @@ module.exports = function() {
 			return;
 		} 
 		
-		console.log("HERE");
+// 		console.log("HERE");
 		
 	    var targetUpgraders = 1;
 	    var targetBuilders = 4;
@@ -25,6 +25,12 @@ module.exports = function() {
 	    	"move": 50,
 	    }
 
+	    var bodyPartToPlacementPriority={
+	    	"work": 1,
+	    	"carry": 2,
+	    	"move": 3,
+	    }
+
 	    var role=undefined;
 	    var bodyParts=[];
 	    var remainingEnergyAvailable=this.room.energyAvailable;
@@ -32,13 +38,13 @@ module.exports = function() {
 	    var roleSequence=[];
 	    if (roomState.numHarvesters < targetHarvesters) {
 	    	role = "harvester";
-	    	roleSequence=[WORK, WORK, CARRY, MOVE];
+	    	roleSequence=[CARRY, MOVE, WORK, WORK];
 	    } else if (roomState.numUpgraders < targetUpgraders) {
 	    	role = "upgrader";
-	    	roleSequence=[WORK, CARRY, MOVE, MOVE];
+	    	roleSequence=[CARRY, MOVE, MOVE, WORK];
 	    } else if (roomState.numBuilders < targetBuilders) {
 	    	role = "builder";
-	    	roleSequence=[WORK, WORK, CARRY, MOVE];
+	    	roleSequence=[CARRY, MOVE, WORK, WORK];
 	    }
 
 	    // Calculate the largest body we can create
@@ -47,22 +53,25 @@ module.exports = function() {
 	    if (roleSequence.length>0) {
 		    var nextPartEnergy=bodyPartToEnergyRequired[roleSequence[iter%roleSequence.length]];
 	    	while(remainingEnergyAvailable>=nextPartEnergy && iter < 10) {
-	    	    console.log("remainingEnergyAvailable: "+remainingEnergyAvailable);
-	    	    console.log("nextPartEnergy: "+nextPartEnergy);
+	    	  //  console.log("remainingEnergyAvailable: "+remainingEnergyAvailable);
+	    	  //  console.log("nextPartEnergy: "+nextPartEnergy);
 	    	    
 	    		bodyParts.push(roleSequence[iter%roleSequence.length]);
 	    		remainingEnergyAvailable-=nextPartEnergy;
 	    		iter++;
 	    		
-	    		console.log("iter%roleSequence.length: "+iter%roleSequence.length);
-	    		console.log("roleSequence[iter%roleSequence.length]: " + roleSequence[iter%roleSequence.length]);
+	   // 		console.log("iter%roleSequence.length: "+iter%roleSequence.length);
+	   // 		console.log("roleSequence[iter%roleSequence.length]: " + roleSequence[iter%roleSequence.length]);
 	    		nextPartEnergy=bodyPartToEnergyRequired[roleSequence[iter%roleSequence.length]];
-	    		console.log("nextPartEnergy: "+nextPartEnergy);
+	   // 		console.log("nextPartEnergy: "+nextPartEnergy);
 	    	}
 
-            console.log(JSON.stringify(bodyParts));
+            // console.log(JSON.stringify(bodyParts));
 
 	    	if (role!=undefined && bodyParts.length > 0) {
+	    		bodyParts=_.sort(bodyParts, function(e) {
+                    return bodyPartToPlacementPriority[e];
+                })
     	    	this.createCreep(bodyParts, undefined, {
     	            role: role,
     	            working: false
