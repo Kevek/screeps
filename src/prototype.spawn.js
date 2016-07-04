@@ -69,7 +69,7 @@ module.exports = function() {
             // console.log(JSON.stringify(bodyParts));
 
 	    	if (role!=undefined && bodyParts.length > 0) {
-	    		bodyParts=_.sort(bodyParts, function(e) {
+				bodyParts=_.sortBy(bodyParts, function(e) {
                     return bodyPartToPlacementPriority[e];
                 })
     	    	this.createCreep(bodyParts, undefined, {
