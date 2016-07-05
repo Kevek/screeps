@@ -8,6 +8,7 @@ module.exports = function() {
 			}
 		}
 		this.memory.knownControllerLevel = this.controller.level;
+		this.memory.sourceInfos = undefined;
 		if (this.memory.sourceInfos === undefined) {
 			var sources = this.find(FIND_SOURCES);
 			var keeperLairs = this.find(FIND_STRUCTURES, {
@@ -19,18 +20,22 @@ module.exports = function() {
 			var sourceInfos = [];
 			for (let i in sources) {
 				var source = sources[i];
-				var xDiff = source.pos.x - 0;
-				var nearbyKeeperLairs = _.filter(keeperLairs, function(e) {
-					return Math.sqrt(Math.pow(e.pos.x - source.pos.x, 2),
-						Math.pow(e.pos.x - source.pos.x, 2)) < 20;
-				});
 				var sourceInfo = {
-						id: source.id,
-						pos: source.pos,
-						assigned: 0
-					}
+					id: source.id,
+					pos: source.pos,
+					assigned: 0
+				}
+
+				if (keeperLairs.length > 0) {
+					var nearbyKeeperLairs = keeperLairs === undefined ? undefined : _.filter(keeperLairs, function(e) {
+						return Math.sqrt(Math.pow(e.pos.x - source.pos.x, 2),
+							Math.pow(e.pos.x - source.pos.x, 2)) < 20;
+					});
 					// For now, make the router totally ignorant of sources guarded by a keeper
-				if (nearbyKeeperLairs === 0) {
+					if (nearbyKeeperLairs === undefined || nearbyKeeperLairs === 0) {
+						sourceInfos.push(sourceInfo);
+					}
+				} else {
 					sourceInfos.push(sourceInfo);
 				}
 			}
