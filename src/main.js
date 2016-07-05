@@ -31,16 +31,16 @@ module.exports.loop = function() {
             continue;
         }
         if (creep.memory.role === 'harvester') {
-            creepHarvester.run(creep);
+            creepHarvester.run(creep, gameState);
             gameState.rooms[creep.room.name].numHarvesters += 1;
             harvesterCount++;
         }
         if (creep.memory.role === 'upgrader') {
-            creepUpgrader.run(creep);
+            creepUpgrader.run(creep, gameState);
             gameState.rooms[creep.room.name].numUpgraders += 1;
         }
         if (creep.memory.role === 'builder') {
-            creepBuilder.run(creep);
+            creepBuilder.run(creep, gameState);
             gameState.rooms[creep.room.name].numBuilders += 1;
         }
     }

@@ -41,7 +41,7 @@ function constructExtensions(room) {
     var spawn = Game.spawns.Spawn1;
     var pos = spawn.pos;
 
-    constructAroundPoint(room, pos, 50, 4, 100, extensionsToBuild, STRUCTURE_EXTENSION);
+    constructAroundPoint(room, pos, 50, 4, room.controller.level * 50, extensionsToBuild, STRUCTURE_EXTENSION);
 }
 
 function constructTowers(room) {
@@ -69,7 +69,7 @@ function constructTowers(room) {
     var spawn = Game.spawns.Spawn1;
     var pos = spawn.pos;
 
-    constructAroundPoint(room, pos, 80, 6, 100, towersToBuild, STRUCTURE_TOWER);
+    constructAroundPoint(room, pos, 80, 2, room.controller.level * 40, towersToBuild, STRUCTURE_TOWER);
 }
 
 function constructAroundPoint(room, centerPosition, maxDiameter, jumpDistance, maxTries, amountToBuild, structureCode) {

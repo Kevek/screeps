@@ -8,14 +8,43 @@ module.exports = function() {
 			}
 		}
 		this.memory.knownControllerLevel = this.controller.level;
+		if (this.memory.sourceInfos === undefined) {
+			var sources = this.find(FIND_SOURCES);
+			var keeperLairs = this.find(FIND_STRUCTURES, {
+				filter: function(e) {
+					return e.structureType === STRUCTURE_KEEPER_LAIR;
+				}
+			});
+
+			var sourceInfos = [];
+			for (let i in sources) {
+				var source = sources[i];
+				var xDiff = source.pos.x - 0;
+				var nearbyKeeperLairs = _.filter(keeperLairs, function(e) {
+					return Math.sqrt(Math.pow(e.pos.x - source.pos.x, 2),
+						Math.pow(e.pos.x - source.pos.x, 2)) < 20;
+				});
+				var sourceInfo = {
+						id: source.id,
+						pos: source.pos,
+						assigned: 0
+					}
+					// For now, make the router totally ignorant of sources guarded by a keeper
+				if (nearbyKeeperLairs === 0) {
+					sourceInfos.push(sourceInfo);
+				}
+			}
+			this.memory.sourceInfos = JSON.stringify(sourceInfos);
+		}
 
 		var roomState = {
 			numHarvesters: 0,
 			numUpgraders: 0,
 			numBuilders: 0,
 			energyStores: [],
-			sources: []
+			sourceInfos: JSON.parse(this.memory.sourceInfos)
 		};
+
 		// var structures=room.find(FIND_MY_STRUCTURES);
 		// // TODO: Do I need to get the name and parse???
 		// for (let structure in structures) {

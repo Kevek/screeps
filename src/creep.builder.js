@@ -3,7 +3,7 @@ module.exports = {
     run: run
 };
 
-function run(creep) {
+function run(creep, gameState) {
     if (creep.memory.working && creep.carry.energy === 0) {
         creep.memory.working = false;
     } else if (!creep.memory.working && creep.carry.energy === creep.carryCapacity) {
@@ -19,10 +19,16 @@ function run(creep) {
             creep.moveTo(constructionSite);
         }
     } else {
-        // TODO: Maybe take energy from something other than source?
-        var source = creep.pos.findClosestByPath(FIND_SOURCES);
-        if (creep.harvest(source) === ERR_NOT_IN_RANGE) {
-            creep.moveTo(source);
+        if (creep.memory.destinationId === undefined) {
+            var randomIndex = Math.floor((Math.random() * gameState.rooms[creep.room.name].sourceInfos.length));
+            var newDestination = gameState.rooms[creep.room.name].sourceInfos[randomIndex];
+            creep.memory.destinationId = newDestination.id
+        }
+        // TODO: How should I record that we've taken a particular destination?
+        // gameState.rooms[ceep.room.name].sourceInfos[]
+        var destination = Game.getObjectById(creep.memory.destinationId);
+        if (creep.harvest(destination) === ERR_NOT_IN_RANGE) {
+            creep.moveTo(destination);
         }
     }
 }
